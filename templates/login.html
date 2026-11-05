@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-5">
+    <form method="post" class="card">
+      {% csrf_token %}
+      <div class="card-body">
+        <h3 class="card-title fw-bold text-center">
+          <i class="fa-solid fa-key me-1" aria-hidden="true"></i>Авторизация
+        </h3>
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger small mb-3">
+            {{ form.non_field_errors|striptags }}
+          </div>
+        {% endif %}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label small">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <div class="form-text small text-muted">
+                {{ field.help_text|safe }}
+              </div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback">
+                {{ field.errors|striptags }}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-dark w-100 rounded-pill">
+          <i class="fa-solid fa-key me-1" aria-hidden="true"></i>Войти
+        </button>
+      </div>
+      <div class="card-footer">
+        <div class="text-center small">
+          Нет аккаунта? <a href="{% url 'register' %}" class="text-decoration-none">Зарегистрироваться</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

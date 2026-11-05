@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Редактирование арта{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap flex-lg-nowrap gap-3 align-items-center pb-3 mb-3 border-bottom">
+  <h3 class="mb-0">
+    <i class="fa-solid fa-pen me-1" aria-hidden="true"></i>Редактирование арта
+  </h3>
+  <a href="{% url 'artwork_detail' artwork.hash %}" class="btn btn-dark rounded-pill px-3 shadow-sm ms-auto">
+    <i class="fa-solid fa-arrow-left me-1" aria-hidden="true"></i>Назад к арту
+  </a>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-md-5 col-lg-3">
+    <img
+      src="{{ artwork.thumbnail_file.url }}"
+      alt="Artwork {{ artwork.hash }}"
+      class="img-fluid rounded-4 d-block mx-auto shadow-sm sticky-top"
+      style="top: 4rem; max-height: 60vh; max-width: 100%; object-fit: contain; height: auto;"
+    >
+  </div>
+  <div class="col-12 col-md-7 col-lg-9">
+    <form method="POST" class="card border-0 shadow-sm rounded-4">
+      {% csrf_token %}
+      <div class="card-body p-4">
+        <div class="row mb-3">
+          <div class="col-lg-5">
+            <label for="{{ form.model_name.id_for_label }}" class="form-label">{{ form.model_name.label }}</label>
+            {{ form.model_name }}
+            <datalist id="model-list">
+              {% for model in form.existing_models %}
+                <option value="{{ model }}"></option>
+              {% endfor %}
+            </datalist>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-lg-4">
+            <label for="{{ form.seed.id_for_label }}" class="form-label">{{ form.seed.label }}</label>
+            {{ form.seed }}
+          </div>
+          <div class="col-lg-4">
+            <label for="{{ form.steps.id_for_label }}" class="form-label">{{ form.steps.label }}</label>
+            {{ form.steps }}
+          </div>
+          <div class="col-lg-4">
+            <label for="{{ form.cfg_scale.id_for_label }}" class="form-label">{{ form.cfg_scale.label }}</label>
+            {{ form.cfg_scale }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.positive_prompt.id_for_label }}" class="form-label">{{ form.positive_prompt.label }}</label>
+          {{ form.positive_prompt }}
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.negative_prompt.id_for_label }}" class="form-label">{{ form.negative_prompt.label }}</label>
+          {{ form.negative_prompt }}
+        </div>
+
+        <div class="d-flex flex-column flex-lg-row justify-content-lg-end flex-wrap flex-md-nowrap gap-3 pt-3 border-top">
+          <button type="submit" name="_save" class="btn btn-dark rounded-pill px-3 shadow-sm">
+            <i class="fa-solid fa-floppy-disk me-1"></i>Сохранить
+          </button>
+          <button type="submit" name="_continue" class="btn btn-dark rounded-pill px-3 shadow-sm">
+            <i class="fa-solid fa-floppy-disk me-1"></i>Сохранить и продолжить
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

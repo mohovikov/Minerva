@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru" data-bs-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Главная{% endblock %} | Minerva</title>
+  
+  <!-- Bootstrap CSS 5.3 -->
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- FontAwesome 7.3.1 Free -->
+  <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}">
+
+  <!-- Custom CSS -->
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+<body>
+  {% include '_header.html' %}
+  <div class="container-fluid">
+    <div class="row">
+      {% include '_sidebar.html' %}
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-3">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  {% include '_messages.html' %}
+
+  <!-- Bootstrap Bundle JS -->
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Custom or page JS -->
+  {% block js %}{% endblock %}
+
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
+
+      const toastElList = document.querySelectorAll('.toast');
+      [...toastElList].forEach((toastEl, index) => {
+        const toast = new bootstrap.Toast(toastEl);
+        setTimeout(() => {
+          toast.show();
+        }, index * 300);
+
+        toastEl.addEventListener('hidden.bs.toast', () => {
+          toastEl.remove();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

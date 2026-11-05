@@ -1,0 +1,28 @@
+services:
+  web:
+    build: .
+    container_name: minerva_web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATA_DIR=/app/data
+    volumes:
+      - static_volume:/app/staticfiles
+      - ./data:/app/data
+
+  nginx:
+    image: nginx:alpine
+    container_name: minerva_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/app/staticfiles
+      - ./data:/app/data
+    depends_on:
+      - web
+
+volumes:
+  static_volume:

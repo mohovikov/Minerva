@@ -1,0 +1,6 @@
+Django
+django-debug-toolbar
+Pillow
+python-dotenv
+python-ulid
+gunicorn

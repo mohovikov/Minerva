@@ -1,0 +1,70 @@
+<div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
+  <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="sidebarMenuLabel">
+        <i class="fa-solid fa-feather-pointed me-1" aria-hidden="true"></i>Minerva
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-md-flex flex-column p-0 pt-md-3 overflow-y-auto">
+      {% if user.is_authenticated and user.is_staff %}
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" href="{% url 'admin:index' %}" target="_blank">
+            <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>Панель управления
+          </a>
+        </li>
+      </ul>
+      <hr class="my-3">
+      {% endif %}
+      {% if user.is_authenticated %}
+      <h6 class="sidebar-heading px-3 mb-2 text-body-secondary text-uppercase">
+        <i class="fa-solid fa-user me-1" aria-hidden="true"></i>{{ user.username }}
+      </h6>
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" href="{% url 'index' %}?page=1">
+            <i class="fa-solid fa-house" aria-hidden="true"></i>Главная
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" href="{% url 'notes' %}?page=1">
+            <i class="fa-solid fa-book-open" aria-hidden="true"></i>База знаний
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" href="{% url 'categories' %}?page=1">
+            <i class="fa-solid fa-folder-tree" aria-hidden="true"></i>Категории
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" href="{% url 'stats' %}">
+            <i class="fa-solid fa-chart-line" aria-hidden="true"></i>Статистика
+          </a>
+        </li>
+        <li class="nav-item">
+          <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="nav-link d-flex align-items-center gap-2">
+              <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Выход
+            </button>
+          </form>
+        </li>
+      </ul>
+      {% else %}
+      <ul class="nav flex-column mb-auto">
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" href="{% url 'login' %}">
+            <i class="fa-solid fa-key" aria-hidden="true"></i>Вход
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" href="{% url 'register' %}">
+            <i class="fa-solid fa-user-plus" aria-hidden="true"></i>Регистрация
+          </a>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+</div>

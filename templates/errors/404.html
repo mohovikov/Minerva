@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}404 - Не найдено{% endblock %}
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 70vh;">
+  <img
+    src="{% static 'img/404.jpg' %}"
+    alt="404 Not Found"
+    class="img-fluid mb-4 shadow-sm rounded-4"
+    style="max-height: 350px;"
+  >
+  <h1 class="display-4 fw-bold text-dark mb-2">404</h1>
+  <h4 class="mb-3 text-muted">Страница не найдена</h4>
+  <p class="text-muted text-center mb-4" style="max-width: 400px;">Запрашиваемая страница не существует или была перемещена. Проверьте правильность введенного адреса</p>
+  <a href="{% url 'index' %}" class="btn btn-dark rounded-pill px-5 py-2 shadow-sm">
+    <i class="fa-solid fa-house me-1" aria-hidden="true"></i>Вернуться в галерею
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Статистика{% endblock %}
+{% block content %}
+<h2 class="pb-3 mb-3 border-bottom">
+  <i class="fa-solid fa-chart-simple me-1" aria-hidden="true"></i>Статистика
+</h2>
+<div class="row g-4">
+  <!-- Виджет: Общая статистика -->
+  <div class="col-12 col-lg-4">
+    <div class="card border-0 shadow-sm rounded-4 p-4 d-flex flex-column justify-content-between">
+      <h5 class="card-title">
+        <i class="fa-solid fa-layer-group me-1" aria-hidden="true"></i>Моя коллекция
+      </h5>
+      <h6 class="card-subtitle mb-4 text-body-secondary small">Общая статистика по вашим артам, заметкам и категориям</h6>
+      <!-- Три главных счетчика -->
+      <div class="row text-center mb-4">
+        <div class="col-4 border-end">
+          <h2 class="fw-bold text-dark mb-0">{{ total_artworks }}</h2>
+          <span class="text-muted small text-uppercase">Артов</span>
+        </div>
+        <div class="col-4 border-end">
+          <h2 class="fw-bold text-dark mb-0">{{ total_notes }}</h2>
+          <span class="text-muted small text-uppercase">Заметок</span>
+        </div>
+        <div class="col-4">
+          <h2 class="fw-bold text-dark mb-0">{{ total_categories }}</h2>
+          <span class="text-muted small text-uppercase">Категорий</span>
+        </div>
+      </div>
+
+      <!-- Информация о категории -->
+      <div class="bg-light rounded-3 p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-muted small">Самая большая категория:</span>
+          <span class="fw-medium">
+            {% if biggest_category %}
+              {{ biggest_category.name }} ({{ biggest_category.notes_count }})
+            {% else %}
+              —
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <!-- Ссылка на последнюю заметку -->
+      {% if latest_note %}
+      <a href="{% url 'note_edit' latest_note.pk %}" class="text-decoration-none mt-3">
+        <div class="bg-light rounded-3 p-3 hover-shadow transition">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted small d-block mb-1">Последняя заметка:</span>
+              <span class="fw-bold text-dark">{{ latest_note.title }}</span>
+            </div>
+            <i class="fa-solid fa-arrow-right text-muted" aria-hidden="true"></i>
+          </div>
+        </div>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  <!-- График 2: Топ моделей (Столбчатый) -->
+  <div class="col-12 col-lg-4">
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+      <h5 class="card-title">
+        <i class="fa-solid fa-cubes me-1" aria-hidden="true"></i>Топ-5 моделей
+      </h5>
+      <h6 class="card-subtitle mb-4 text-body-secondary small">Топ-5 моделей, которые вы используете чаще всего. Наведите на график, чтобы увидеть точное количество</h6>
+      <canvas id="modelChart" style="max-height: 300px;"></canvas>
+    </div>
+  </div>
+  <!-- График 4: Разрешения (Столбчатый) -->
+  <div class="col-12 col-lg-4">
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+      <h5 class="card-title">
+        <i class="fa-solid fa-crop-simple me-1" aria-hidden="true"></i>Топ-5 разрешений
+      </h5>
+      <h6 class="card-subtitle mb-4 text-body-secondary small">В каких форматах вы генерируете чаще всего. Помогает понять, какие пропорции вам ближе</h6>
+      <canvas id="resChart" style="max-height: 350px;"></canvas>
+    </div>
+  </div>
+  <!-- График 1: Динамика по дням (Линейный) -->
+  <div class="col-12">
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+      <h5 class="card-title">
+        <i class="fa-solid fa-chart-line me-1" aria-hidden="true"></i>Генерация за последние 30 дней
+      </h5>
+      <h6 class="card-subtitle mb-4 text-body-secondary small">Динамика вашей активности. Помогает увидеть творческие всплески и периоды отдыха</h6>
+      <canvas id="dailyChart" style="max-height: 300px;"></canvas>
+    </div>
+  </div>
+  <!-- График 3: Топ-15 тегов (Горизонтальный) -->
+  <div class="col-12">
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+      <h5 class="card-title">
+        <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Топ-15 используемых тегов
+      </h5>
+      <h6 class="card-subtitle mb-4 text-body-secondary small">Какие слова и теги чаще всего встречаются в ваших позитивных промптах</h6>
+      <canvas id="tagChart" style="max-height: 500px;"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/chart.umd.min.js' %}"></script>
+<script>
+  const dates = {{ dates_json|safe }}
+  const counts = {{ counts_json|safe }}
+  const modelNames = {{ model_names_json|safe }}
+  const modelCounts = {{ model_counts_json|safe }}
+  const tagNames = {{ tag_names_json|safe }}
+  const tagCounts = {{ tag_counts_json|safe }}
+  const resNames = {{ res_names_json|safe }}
+  const resCounts = {{ res_counts_json|safe }}
+</script>
+<script src="{% static 'js/stats.js' %}"></script>
+{% endblock %}

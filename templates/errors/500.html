@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}500 - Ошибка сервера{% endblock %}
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 70vh;">
+  <img
+    src="{% static 'img/500.jpg' %}"
+    alt="500 Server Error"
+    class="img-fluid mb-4 shadow-sm rounded-4"
+    style="max-height: 350px;"
+  >
+  <h1 class="display-4 fw-bold text-dark mb-2">500</h1>
+  <h4 class="mb-3 text-muted">Внутренняя ошибка</h4>
+  <p class="text-muted text-center mb-4" style="max-width: 400px;">На сервере произошла непредвиденная ошибка. Пожалуйста, попробуйте обновить страницу позже</p>
+  <a href="{% url 'index' %}" class="btn btn-dark rounded-pill px-5 py-2 shadow-sm">
+    <i class="fa-solid fa-rotate-right me-1" aria-hidden="true"></i>Обновить
+  </a>
+</div>
+{% endblock %}

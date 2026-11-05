@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Арт {{ artwork.hash|slice:":8" }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-lg-nowrap align-items-center pb-3 mb-3 border-bottom">
+  <h3 class="mb-md-0">
+    <i class="fa-solid fa-image me-1" aria-hidden="true"></i>Арт {{ artwork.hash|slice:":8" }}
+  </h3>
+  <a href="{% url 'index' %}?page=1" class="btn btn-dark rounded-pill px-3 shadow-sm">
+    <i class="fa-solid fa-arrow-left me-1" aria-hidden="true"></i>В галерею
+  </a>
+</div>
+<div class="row g-3">
+  <div class="col-md-5 col-lg-7">
+    <img
+      src="{{ artwork.original_file.url }}"
+      alt="Artwork {{ artwork.hash }}"
+      class="img-fluid rounded-4 d-block mx-auto shadow-sm sticky-top"
+      style="top: 4rem; max-height: 60vh; max-width: 100%; object-fit: contain; height: auto;"
+    >
+  </div>
+
+  <div class="col-md-7 col-lg-5">
+    <div class="card border-0 shadow-sm rounded-4 mb-3">
+      <div class="card-body">
+        <h5 class="card-title d-flex align-items-center">
+          <span>
+            <i class="fa-solid fa-circle-info me-1" aria-hidden="true"></i>Информация
+          </span>
+          <a
+            href="{% url 'artwork_edit' artwork.hash %}"
+            class="btn btn-sm btn-outline-dark rounded-pill px-3 ms-auto"
+            data-bs-toggle="tooltip" data-bs-title="Редактировать"
+          >
+            <i class="fa-solid fa-pen" aria-hidden="true"></i>
+          </a>
+        </h5>
+        <div class="row g-2 small">
+          <div class="col-5 text-muted">Модель</div>
+          <div class="col-7 fw-medium text-end">{{ artwork.model_name|default:'—' }}</div>
+
+          <div class="col-5 text-muted">Seed</div>
+          <div class="col-7 fw-medium text-end text-break">{{ artwork.seed|default:'—' }}</div>
+
+          <div class="col-5 text-muted">Steps</div>
+          <div class="col-7 fw-medium text-end">{{ artwork.steps|default:'—' }}</div>
+
+          <div class="col-5 text-muted">CFG</div>
+          <div class="col-7 fw-medium text-end">{{ artwork.cfg_scale|default:'—' }}</div>
+
+          <div class="col-5 text-muted">Размер</div>
+          <div class="col-7 fw-medium text-end">{{ artwork.width }}x{{ artwork.height }}</div>
+
+          <div class="col-5 text-muted">Дата загрузки</div>
+          <div class="col-7 fw-medium text-end">
+            <time
+              datetime="{{ artwork.uploaded_at.isoformat }}"
+              class="js-timeago fw-medium"
+              data-bs-placement="top"
+              data-bs-toggle="tooltip"
+            >
+              <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
+            </time>
+          </div>
+
+          <div class="col-5 text-muted">Дата обновления</div>
+          <div class="col-7 fw-medium text-end">
+            <time
+              datetime="{{ artwork.updated_at.isoformat }}"
+              class="js-timeago fw-medium"
+              data-bs-placement="top"
+              data-bs-toggle="tooltip"
+            >
+              <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
+            </time>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if artwork.positive_prompt or artwork.negative_prompt %}
+    <div class="row g-3 mt-3">
+      {% if artwork.positive_prompt %}
+      <div class="col-12">
+        <div class="d-flex justify-content-between mb-1 mx-2">
+          <span class="small text-muted fw-bold text-uppercase">Positive</span>
+          <button
+            class="btn btn-sm btn-link text-decoration-none p-0 text-muted copy-btn"
+            data-bs-toggle="tooltip" data-bs-title="Скопировать данные"
+            data-clipboard-text="{{ artwork.positive_prompt }}"
+          >
+            <i class="fa-regular fa-copy" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="bg-light p-3 rounded-3 small font-monospace" style="white-space: pre-wrap; word-wrap: break-word;">{{ artwork.positive_prompt }}</div>
+      </div>
+      {% endif %}
+        
+      {% if artwork.negative_prompt %}
+      <div class="col-12">
+        <div class="d-flex justify-content-between mb-1 mx-2">
+          <span class="small text-muted fw-bold text-uppercase">Negative</span>
+          <button
+            class="btn btn-sm btn-link text-decoration-none p-0 text-muted copy-btn"
+            data-bs-toggle="tooltip" data-bs-title="Скопировать данные"
+            data-clipboard-text="{{ artwork.negative_prompt }}"
+          >
+            <i class="fa-regular fa-copy" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="bg-light p-3 rounded-3 small font-monospace" style="white-space: pre-wrap; word-wrap: break-word;">{{ artwork.negative_prompt }}</div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+    <div class="border-top mt-3 pt-3 d-flex flex-column gap-3">
+      <a href="{% url 'download_art' artwork.hash %}" class="btn btn-dark rounded-pill shadow-sm">
+        <i class="fa-solid fa-download me-1" aria-hidden="true"></i>Скачать оригинал
+      </a>
+      <button type="submit" class="btn btn-outline-danger rounded-pill" form="delete_artwork">
+        <i class="fa-solid fa-trash me-1" aria-hidden="true"></i>Удалить арт
+      </button>
+    </div>
+  </div>
+</div>
+<form
+  method="POST"
+  action="{% url 'artwork_delete' artwork.hash %}"
+  onsubmit="return confirm('Вы уверены, что хотите удалить этот арт? Это действие необратимо.');"
+  id="delete_artwork"
+>
+  {% csrf_token %}
+</form>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/timeago.js' %}"></script>
+<script src="{% static 'js/copy.js' %}"></script>
+{% endblock %}
