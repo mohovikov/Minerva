@@ -1,29 +1,16 @@
-import re
-
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from .models import Artwork, Category, Note
+
+from .models import Artwork, Category
 
 
 @admin.register(Artwork)
 class ArtworkAdmin(admin.ModelAdmin):
-    list_display = (
-        "short_hash",
-        "thumbnail_preview",
-        "user",
-        "model_name",
-        "image_size",
-        "tags_count",
-        "uploaded_at",
-    )
-    list_display_links = ("short_hash", "thumbnail_preview")
-    list_filter = ("user", "model_name", "uploaded_at")
-    search_fields = ("positive_prompt", "model_name")
 
     fieldsets = (
         (
             "Основная информация",
-            {"fields": ("user", "hash")},
+            {"fields": ("user", "hash", "category")},
         ),
         (
             "Параметры генерации",
@@ -46,7 +33,17 @@ class ArtworkAdmin(admin.ModelAdmin):
             },
         ),
     )
-
+    date_hierarchy = "uploaded_at"
+    list_per_page = 24
+    list_display = (
+        "short_hash",
+        "thumbnail_preview",
+        "user",
+        "category",
+        "model_name",
+        "image_size",
+        "uploaded_at",
+    )
     readonly_fields = (
         "hash",
         "user",
@@ -55,6 +52,13 @@ class ArtworkAdmin(admin.ModelAdmin):
         "image_preview",
         "image_size",
     )
+    list_display_links = ("short_hash", "thumbnail_preview")
+    list_filter = ("user", "category", "model_name", "uploaded_at")
+    list_select_related = ("user", "category")
+    save_on_top = True
+    search_fields = ("positive_prompt", "negative_prompt")
+    search_help_text = "Поиск по positive и negative промптам"
+    show_full_result_count = False
 
     @admin.display(description="Превью")
     def image_preview(self, obj):
@@ -68,7 +72,9 @@ class ArtworkAdmin(admin.ModelAdmin):
     def thumbnail_preview(self, obj):
         if obj.thumbnail_file:
             return mark_safe(
-                f'<img src="{obj.thumbnail_file.url}" width="50" height="50" style="object-fit: cover; border-radius: 8px;" alt="{obj.hash}"/>'
+                f'<img src="{obj.thumbnail_file.url}" width="50" height="50" '
+                f'style="object-fit: cover; border-radius: 8px;" '
+                f'loading="lazy" alt="{obj.hash}"/>'
             )
         return "—"
 
@@ -78,18 +84,6 @@ class ArtworkAdmin(admin.ModelAdmin):
             return f"{obj.width}x{obj.height}"
         return "—"
 
-    @admin.display(description="Кол-во тегов")
-    def tags_count(self, obj):
-        if not obj.positive_prompt:
-            return 0
-
-        tags = [
-            re.sub(r"[\(\)\[\]\{\}]|:\d+\.?\d*", "", tag).strip().lower()
-            for tag in obj.positive_prompt.split(",")
-            if tag.strip()
-        ]
-        return len(tags)
-
     @admin.display(description="Хеш (ULID)")
     def short_hash(self, obj):
         if obj.hash:
@@ -98,16 +92,8 @@ class ArtworkAdmin(admin.ModelAdmin):
 
 
 @admin.register(Category)
-class NoteCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "user")
-    list_filter = ("user",)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "user", "color", "style")
+    list_filter = ("user", "color", "style")
     search_fields = ("name",)
-    readonly_fields = ("user",)
-
-
-@admin.register(Note)
-class NoteAdmin(admin.ModelAdmin):
-    list_display = ("title", "category", "user", "updated_at")
-    list_filter = ("category", "user")
-    search_fields = ("title", "body")
-    readonly_fields = ("user", "created_at", "updated_at")
+    list_editable = ("color", "style")

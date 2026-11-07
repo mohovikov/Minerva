@@ -3,26 +3,38 @@
 {% block title %}Мои арты{% endblock %}
 {% block content %}
 <div class="d-flex flex-wrap flex-md-nowrap gap-3 align-items-center pb-3 mb-3 border-bottom">
-  <div class="d-flex flex-column">
-    <h3>Привет, <b>{{ user.username }}</b>!</h3>
-    <p class="text-muted mb-0 small">У тебя <strong>{{ total_artworks }}</strong> работ.</p>
-  </div>
-  <a href="{% url 'artwork_upload' %}" class="btn btn-dark rounded-pill px-3 shadow-sm ms-auto">
+  <h3 class="mb-0">Привет, <b>{{ user.username }}</b>!</h3>
+  <a href="{% url 'artworks:upload' %}" class="btn btn-dark rounded-pill px-3 shadow-sm ms-auto">
     <i class="fa-solid fa-upload me-1" aria-hidden="true"></i>Загрузить арт
   </a>
 </div>
-{% if artworks %}
 <div class="card border-0 shadow-sm mb-3">
   <div class="card-body">
     <h5 class="card-title mb-3">
-      <i class="fa-solid fa-magnifying-glass me-1" aria-hidden="true""></i>Поиск
+      <i class="fa-solid fa-magnifying-glass me-1" aria-hidden="true""></i>Быстрый поиск
     </h5>
     <form method="GET" action="{% url 'index' %}">
       <div class="row g-3">
-        <div class="col-12 col-lg-7">
-          <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Поиск по промптам...">
+        <div class="col-md-6 col-lg-4">
+          <div class="input-group">
+            <span
+              class="input-group-text"
+              id="helpSearch"
+              data-bs-toggle="tooltip" data-bs-title="Поиск осуществляется по Positive и Negative промптах"
+            >
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            </span>
+            <input
+              type="text"
+              name="q"
+              value="{{ current_q }}"
+              class="form-control"
+              placeholder="Поиск по тегам (через запятую)..."
+              aria-describedby="helpSearch"
+            >
+          </div>
         </div>
-        <div class="col-12 col-md-6 col-lg-3">
+        <div class="col-6 col-md-3 col-lg-3">
           <select name="model" class="form-select">
             <option value="">Все модели</option>
             {% for m in models %}
@@ -30,15 +42,25 @@
             {% endfor %}
           </select>
         </div>
-        <div class="col-12 col-md-6 col-lg-2">
-          <button type="submit" class="btn btn-dark px-4 w-100">
+        <div class="col-6 col-md-3 col-lg-3">
+          <select name="category" class="form-select">
+            <option value="">Все категории</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == current_category %}selected{% endif %}>
+                {{ cat.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12 col-lg-2">
+          <button type="submit" class="btn btn-dark w-100">
             <i class="fa-solid fa-magnifying-glass me-1" aria-hidden="true"></i>Поиск
           </button>
         </div>
       </div>
     </form>
   </div>
-  {% if current_q or current_model %}
+  {% if current_q or current_model or current_category %}
   <div class="card-footer small text-center">
     Найдено: <strong>{{ paginator.count }}</strong> артов
     <a href="{% url 'index' %}" class="ms-2 text-decoration-none text-danger">
@@ -47,20 +69,23 @@
   </div>
 {% endif %}
 </div>
-{% endif %}
-<div class="row g-3" {% if artworks %}data-masonry='{"percentPosition": true }'{% endif %}>
+<div class="row g-3 masonry-grid">
   {% for artwork in artworks %}
-  <div class="col-6 col-md-4 col-lg-2">
+  <div class="masonry-item col-6 col-md-4 col-lg-3 col-xl-2">
     <div class="card rounded-4 border-0 shadow-sm">
-      <a href="{{ artwork.get_absolute_url }}">
+      <a href="{{ artwork.get_absolute_url }}" class="position-relative">
         <img
           src="{{ artwork.thumbnail_file.url }}"
           alt="Artwork {{ artwork.hash|slice:":8" }}"
-          class="d-block img-fluid rounded-top-4"
           loading="lazy"
-          {% if artwork.width %}width="{{ artwork.width }}"{% endif %}
-          {% if artwork.height %}height="{{ artwork.height }}"{% endif %}
+          class="artwork-preview rounded-top-4"
+          style="--aspect-w: {{ artwork.width|default:'1' }}; --aspect-h: {{ artwork.height|default:'1' }};"
         >
+        {% if artwork.category %}
+        <div class="position-absolute bottom-0 start-0 p-1">
+          {{ artwork.category.get_badge_html }}
+        </div>
+        {% endif %}
       </a>
       <div class="card-footer rounded-bottom-4 small border-top-0">
         <time
@@ -79,7 +104,7 @@
     <i class="fa-solid fa-palette fa-3x text-muted mb-3" aria-hidden="true"></i>
     <h4 class="text-muted">Здесь пока пусто</h4>
     <p class="mx-auto" style="max-width: 30rem;">Ваша личная галерея ждет первого шедевра. Загрузите арт, чтобы начать собирать коллекцию, систематизировать промпты и находить нужные настройки.</p>
-    <a href="{% url 'artwork_upload' %}" class="btn btn-dark rounded-pill px-3 shadow-sm">
+    <a href="{% url 'artworks:upload' %}" class="btn btn-dark rounded-pill px-3 shadow-sm">
       <i class="fa-solid fa-plus me-1" aria-hidden="true"></i>Загрузить первый арт
     </a>
   </div>
@@ -92,7 +117,7 @@
     {% with filters="&q="|add:current_q|add:"&model="|add:current_model %}
       {% if page_obj.has_previous %}
         <li class="page-item">
-          <a class="page-link text-dark" href="?page={{ page_obj.previous_page_number }}{{ filters }}">Назад</a>
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ filters }}">Назад</a>
         </li>
       {% else %}
         <li class="page-item disabled">
@@ -101,14 +126,14 @@
       {% endif %}
 
       <li class="page-item active" aria-current="page">
-        <span class="page-link bg-dark border-dark">
+        <span class="page-link">
           {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
         </span>
       </li>
 
       {% if page_obj.has_next %}
         <li class="page-item">
-          <a class="page-link text-dark" href="?page={{ page_obj.next_page_number }}{{ filters }}">Вперед</a>
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ filters }}">Вперед</a>
         </li>
       {% else %}
         <li class="page-item disabled">
@@ -122,6 +147,8 @@
 {% endblock %}
 
 {% block js %}
+<script src="{% static 'js/imagesloaded.pkgd.min.js' %}"></script>
 <script src="{% static 'js/masonry.pkgd.min.js' %}"></script>
+<script src="{% static 'js/gallery.js' %}"></script>
 <script src="{% static 'js/timeago.js' %}"></script>
 {% endblock %}

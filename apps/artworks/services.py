@@ -20,7 +20,7 @@ class ImageService:
             img = img.convert("RGB")
 
         original_io = BytesIO()
-        img.save(original_io, format="JPEG", quality=95, optimize=True)
+        img.save(original_io, format="JPEG", quality=85, optimize=True)
         original_file = ContentFile(original_io.getvalue(), name=f"{ulid_str}.jpg")
 
         thumb_io = BytesIO()

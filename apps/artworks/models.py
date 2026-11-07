@@ -1,7 +1,71 @@
-from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.safestring import mark_safe
+from django.db import models
+
+
+class Category(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="artwork_categories",
+        verbose_name="Пользователь",
+    )
+    name = models.CharField(max_length=50, verbose_name="Название")
+
+    color = models.CharField(
+        max_length=20,
+        default="secondary",
+        choices=[
+            ("primary", "Синий"),
+            ("secondary", "Серый"),
+            ("success", "Зеленый"),
+            ("danger", "Красный"),
+            ("warning", "Желтый"),
+            ("info", "Голубой"),
+            ("light", "Светлый"),
+            ("dark", "Темный"),
+        ],
+        verbose_name="Цвет",
+    )
+    style = models.CharField(
+        max_length=20,
+        default="border",
+        choices=[
+            ("solid", "Яркий"),
+            ("subtle", "Мягкий"),
+            ("subtle_border", "С рамкой"),
+        ],
+        verbose_name="Стиль бейджа",
+    )
+
+    class Meta:
+        verbose_name = "Категория арта"
+        verbose_name_plural = "Категории артов"
+        ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "name"], name="unique_user_artwork_category"
+            )
+        ]
+
+    def __str__(self):
+        return self.name
+
+    def get_badge_html(self):
+        if self.style == "solid":
+            return mark_safe(
+                f'<span class="badge text-bg-{self.color} rounded-pill" style="text-wrap:auto;">{self.name}</span>'
+            )
+        elif self.style == "subtle":
+            return mark_safe(
+                f'<span class="badge bg-{self.color}-subtle text-{self.color}-emphasis rounded-pill" style="text-wrap:auto;">{self.name}</span>'
+            )
+        elif self.style == "subtle_border":
+            return mark_safe(
+                f'<span class="badge bg-{self.color}-subtle border border-{self.color}-subtle text-{self.color}-emphasis rounded-pill" style="text-wrap:auto;">{self.name}</span>'
+            )
 
 
 class Artwork(models.Model):
@@ -23,6 +87,14 @@ class Artwork(models.Model):
     )
 
     # Метаданные
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="artworks",
+        verbose_name="Категория",
+    )
     model_name = models.CharField(
         max_length=100, blank=True, null=True, verbose_name="Модель"
     )
@@ -58,7 +130,7 @@ class Artwork(models.Model):
         return f"Artwork {self.hash[:8]}"
 
     def get_absolute_url(self):
-        return reverse("artwork_detail", kwargs={"hash": self.hash})
+        return reverse("artworks:detail", kwargs={"hash": self.hash})
 
     def save(self, *args, **kwargs):
         if not self.pk and self.original_file and self.thumbnail_file:
@@ -66,61 +138,3 @@ class Artwork(models.Model):
             self.original_file.name = f"{sharded_path}{self.hash}.jpg"
             self.thumbnail_file.name = f"{sharded_path}{self.hash}.webp"
         super().save(*args, **kwargs)
-
-
-class Category(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="categories",
-        verbose_name="Пользователь",
-    )
-    name = models.CharField(max_length=50, verbose_name="Название")
-
-    class Meta:
-        verbose_name = "Категория заметок"
-        verbose_name_plural = "Категории заметок"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "name"], name="unique_user_category"
-            )
-        ]
-
-    def __str__(self):
-        return self.name
-
-
-class Note(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="notes",
-        verbose_name="Пользователь",
-    )
-    title = models.CharField(max_length=150, verbose_name="Заголовок")
-    body = models.TextField(verbose_name="Содержимое")
-
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="notes",
-        verbose_name="Категория",
-    )
-
-    created_at = models.DateTimeField(
-        default=timezone.now, verbose_name="Дата создания"
-    )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-
-    class Meta:
-        verbose_name = "Заметка"
-        verbose_name_plural = "Заметки"
-        ordering = ["-updated_at"]
-        indexes = [
-            models.Index(fields=["user", "-updated_at"], name="note_user_date_idx"),
-        ]
-
-    def __str__(self):
-        return self.title

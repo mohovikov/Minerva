@@ -65,7 +65,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "gallery.apps.GalleryConfig",
+    "apps.artworks.apps.ArtworksConfig",
+    "apps.core.apps.CoreConfig",
+    "apps.notes.apps.NotesConfig",
 ]
 if DEBUG:
     INSTALLED_APPS.append("debug_toolbar")
@@ -95,7 +97,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "gallery.context_processors.version_context",
+                "apps.core.context_processors.version_context",
             ],
         },
     },
@@ -164,6 +166,7 @@ MAILERS = {
     },
 }
 
+DATA_UPLOAD_MAX_NUMBER_FILES = 30
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "index"

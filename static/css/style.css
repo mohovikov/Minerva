@@ -17,6 +17,37 @@
 :root {
   --bs-navbar-font-family: "Outfit", sans-serif;
   --bs-body-font-family: "Roboto", sans-serif;
+
+  /* ChartJS */
+  --chart-line: #212529;
+  --chart-line-bg: rgba(33, 37, 41, 0.1);
+  --chart-text: #6c757d;
+  --chart-grid: rgba(0, 0, 0, 0.1);
+
+  --chart-bar-1: #212529;
+  --chart-bar-2: #495057;
+  --chart-bar-3: #6c757d;
+  --chart-bar-4: #adb5bd;
+  --chart-bar-5: #dee2e6;
+
+  --chart-bar-main: #343a40;
+  --chart-bar-res: #6c757d;
+}
+
+[data-bs-theme="dark"] {
+  --chart-line: #adb5bd;
+  --chart-line-bg: rgba(173, 181, 189, 0.1);
+  --chart-text: #adb5bd;
+  --chart-grid: rgba(255, 255, 255, 0.1);
+
+  --chart-bar-1: #f8f9fa;
+  --chart-bar-2: #ced4da;
+  --chart-bar-3: #adb5bd;
+  --chart-bar-4: #6c757d;
+  --chart-bar-5: #495057;
+
+  --chart-bar-main: #adb5bd;
+  --chart-bar-res: #6c757d;
 }
 img {
   user-select: none;
@@ -61,4 +92,34 @@ img {
   .navbar-search {
     display: block;
   }
+}
+
+/* Artwork */
+.artwork-preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--aspect-w) / var(--aspect-h);
+}
+
+[data-bs-theme="dark"] .btn-dark {
+  --bs-btn-bg: #f8f9fa;
+  --bs-btn-border-color: #f8f9fa;
+  --bs-btn-color: #212529;
+  --bs-btn-hover-bg: #e2e6ea;
+  --bs-btn-hover-border-color: #dae0e5;
+  --bs-btn-hover-color: #16181b;
+  --bs-btn-active-bg: #d3d9df;
+  --bs-btn-active-border-color: #d3d9df;
+  --bs-btn-active-color: #16181b;
+}
+
+[data-bs-theme="dark"] .btn-outline-dark {
+  --bs-btn-color: #f8f9fa;
+  --bs-btn-border-color: #f8f9fa;
+  --bs-btn-hover-bg: #f8f9fa;
+  --bs-btn-hover-border-color: #f8f9fa;
+  --bs-btn-hover-color: #212529;
+  --bs-btn-active-bg: #f8f9fa;
+  --bs-btn-active-color: #212529;
 }

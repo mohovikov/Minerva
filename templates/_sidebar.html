@@ -28,13 +28,18 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" href="{% url 'notes' %}?page=1">
-            <i class="fa-solid fa-book-open" aria-hidden="true"></i>База знаний
+          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" href="{% url 'artworks:category_list' %}?page=1">
+            <i class="fa-solid fa-tags" aria-hidden="true"></i>Категории артов
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" href="{% url 'categories' %}?page=1">
-            <i class="fa-solid fa-folder-tree" aria-hidden="true"></i>Категории
+          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" href="{% url 'notes:list' %}?page=1">
+            <i class="fa-solid fa-note-sticky" aria-hidden="true"></i>Заметки
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" aria-current="page" href="{% url 'notes:category_list' %}?page=1">
+            <i class="fa-solid fa-folder-open" aria-hidden="true"></i>Категории заметок
           </a>
         </li>
         <li class="nav-item">
@@ -43,7 +48,11 @@
           </a>
         </li>
         <li class="nav-item">
-          <form method="POST" action="{% url 'logout' %}">
+          <form
+            method="POST"
+            action="{% url 'logout' %}"
+            onsubmit="return confirm('Уже уходите? Так быстро?');"
+          >
             {% csrf_token %}
             <button type="submit" class="nav-link d-flex align-items-center gap-2">
               <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Выход

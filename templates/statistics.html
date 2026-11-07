@@ -8,60 +8,31 @@
 <div class="row g-4">
   <!-- Виджет: Общая статистика -->
   <div class="col-12 col-lg-4">
-    <div class="card border-0 shadow-sm rounded-4 p-4 d-flex flex-column justify-content-between">
+    <div class="card border-0 shadow rounded-4 p-4 d-flex flex-column justify-content-between">
       <h5 class="card-title">
         <i class="fa-solid fa-layer-group me-1" aria-hidden="true"></i>Моя коллекция
       </h5>
       <h6 class="card-subtitle mb-4 text-body-secondary small">Общая статистика по вашим артам, заметкам и категориям</h6>
       <!-- Три главных счетчика -->
-      <div class="row text-center mb-4">
+      <div class="row text-center">
         <div class="col-4 border-end">
-          <h2 class="fw-bold text-dark mb-0">{{ total_artworks }}</h2>
+          <h2 class="fw-bold mb-0">{{ total_artworks }}</h2>
           <span class="text-muted small text-uppercase">Артов</span>
         </div>
         <div class="col-4 border-end">
-          <h2 class="fw-bold text-dark mb-0">{{ total_notes }}</h2>
+          <h2 class="fw-bold mb-0">{{ total_notes }}</h2>
           <span class="text-muted small text-uppercase">Заметок</span>
         </div>
         <div class="col-4">
-          <h2 class="fw-bold text-dark mb-0">{{ total_categories }}</h2>
+          <h2 class="fw-bold mb-0">{{ total_categories }}</h2>
           <span class="text-muted small text-uppercase">Категорий</span>
         </div>
       </div>
-
-      <!-- Информация о категории -->
-      <div class="bg-light rounded-3 p-3">
-        <div class="d-flex justify-content-between align-items-center">
-          <span class="text-muted small">Самая большая категория:</span>
-          <span class="fw-medium">
-            {% if biggest_category %}
-              {{ biggest_category.name }} ({{ biggest_category.notes_count }})
-            {% else %}
-              —
-            {% endif %}
-          </span>
-        </div>
-      </div>
-
-      <!-- Ссылка на последнюю заметку -->
-      {% if latest_note %}
-      <a href="{% url 'note_edit' latest_note.pk %}" class="text-decoration-none mt-3">
-        <div class="bg-light rounded-3 p-3 hover-shadow transition">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <span class="text-muted small d-block mb-1">Последняя заметка:</span>
-              <span class="fw-bold text-dark">{{ latest_note.title }}</span>
-            </div>
-            <i class="fa-solid fa-arrow-right text-muted" aria-hidden="true"></i>
-          </div>
-        </div>
-      </a>
-      {% endif %}
     </div>
   </div>
   <!-- График 2: Топ моделей (Столбчатый) -->
   <div class="col-12 col-lg-4">
-    <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="card border-0 shadow rounded-4 p-4">
       <h5 class="card-title">
         <i class="fa-solid fa-cubes me-1" aria-hidden="true"></i>Топ-5 моделей
       </h5>
@@ -71,7 +42,7 @@
   </div>
   <!-- График 4: Разрешения (Столбчатый) -->
   <div class="col-12 col-lg-4">
-    <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="card border-0 shadow rounded-4 p-4">
       <h5 class="card-title">
         <i class="fa-solid fa-crop-simple me-1" aria-hidden="true"></i>Топ-5 разрешений
       </h5>
@@ -81,7 +52,7 @@
   </div>
   <!-- График 1: Динамика по дням (Линейный) -->
   <div class="col-12">
-    <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="card border-0 shadow rounded-4 p-4">
       <h5 class="card-title">
         <i class="fa-solid fa-chart-line me-1" aria-hidden="true"></i>Генерация за последние 30 дней
       </h5>
@@ -91,12 +62,47 @@
   </div>
   <!-- График 3: Топ-15 тегов (Горизонтальный) -->
   <div class="col-12">
-    <div class="card border-0 shadow-sm rounded-4 p-4">
-      <h5 class="card-title">
-        <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Топ-15 используемых тегов
-      </h5>
-      <h6 class="card-subtitle mb-4 text-body-secondary small">Какие слова и теги чаще всего встречаются в ваших позитивных промптах</h6>
+    <div class="card border-0 shadow rounded-4 p-4">
+      <div class="d-flex align-items-start flex-column flex-lg-row">
+        <div>
+          <h5 class="card-title">
+            <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Топ-15 используемых тегов
+          </h5>
+          <h6 class="card-subtitle mb-4 text-body-secondary small">Какие слова и теги чаще всего встречаются в ваших позитивных промптах</h6>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 ms-auto" data-bs-toggle="modal" data-bs-target="#allTagsModal">
+          <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Все теги
+        </button>
+      </div>
       <canvas id="tagChart" style="max-height: 500px;"></canvas>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="allTagsModal" tabindex="-1" aria-labelledby="allTagsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow rounded-4">
+      <div class="modal-header border-bottom-0">
+        <h5 class="modal-title" id="allTagsModalLabel">
+          <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Все используемые теги
+          <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill ms-1">{{ all_tags|length }}</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex flex-wrap gap-3">
+          {% for tag, count in all_tags %}
+            <span class="badge bg-light-subtle border border-light-subtle text-light-emphasis rounded-pill" style="display: flex; align-items: center;">
+              {{ tag }}<span class="vr mx-2"></span>
+              <span class="badge bg-info-subtle text-info-emphasis rounded-pill">{{ count }}</span>
+            </span>
+          {% empty %}
+            <p class="text-muted">Тегов пока нет.</p>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="modal-footer border-top-0">
+        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Закрыть</button>
+      </div>
     </div>
   </div>
 </div>

@@ -20,18 +20,20 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
-admin.site.site_header = "Minerva Admin"
-admin.site.site_title = "Minerva Admin Portal"
-admin.site.index_title = "Управление галереей и пользователями"
+admin.site.site_header = "Minerva Admin Panel"
+admin.site.site_title = "Minerva Admin Panel"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("gallery.urls")),
+    path("", include("apps.core.urls")),
+    path("artworks/", include("apps.artworks.urls")),
+    path("notes/", include("apps.notes.urls")),
 ]
 
-handler404 = "gallery.views.custom_404"
-handler403 = "gallery.views.custom_403"
-handler500 = "gallery.views.custom_500"
+handler400 = "apps.core.views.custom_400"
+handler404 = "apps.core.views.custom_404"
+handler403 = "apps.core.views.custom_403"
+handler500 = "apps.core.views.custom_500"
 
 if settings.DEBUG:
     from debug_toolbar.toolbar import debug_toolbar_urls

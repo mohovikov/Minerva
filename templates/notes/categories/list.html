@@ -4,18 +4,13 @@
 <div class="d-flex flex-wrap flex-lg-nowrap gap-3 align-items-center pb-3 mb-3 border-bottom">
   <div class="d-flex flex-column">
     <h3>
-      <i class="fa-solid fa-folder-tree me-1" aria-hidden="true"></i>Категории
+      <i class="fa-solid fa-folder-open me-1" aria-hidden="true"></i>Категории заметок
     </h3>
-    <p class="text-muted mb-0 small">Управление папками для ваших заметок</p>
+    <p class="text-muted mb-0 small">Структура ваших заметок. Группируйте заметки по темам, чтобы быстро находить нужное.</p>
   </div>
-  <div class="d-flex gap-3 ms-auto">
-    <a href="{% url 'notes' %}" class="btn btn-outline-dark rounded-pill px-3 shadow-sm">
-      <i class="fa-solid fa-book-open me-1" aria-hidden="true"></i>В галерею
+  <a href="{% url 'notes:category_new' %}" class="btn btn-dark rounded-pill px-3 shadow-sm ms-auto">
+      <i class="fa-solid fa-plus me-1" aria-hidden="true"></i>Новая категория
     </a>
-    <a href="{% url 'category_new' %}" class="btn btn-dark rounded-pill px-3 shadow-sm">
-      <i class="fa-solid fa-folder-plus me-1" aria-hidden="true"></i>Новая категория
-    </a>
-  </div>
 </div>
 <div class="row g-3">
   {% for cat in categories %}
@@ -23,18 +18,18 @@
     <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
       <div class="d-flex justify-content-between align-items-start">
         <div class="d-flex align-items-center">
-          <div class="bg-light rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 48px; height: 48px;">
+          <div class="bg-dark-subtle rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 48px; height: 48px;">
             <i class="fa-solid fa-folder-open text-muted" aria-hidden="true"></i>
           </div>
           <div>
-            <h5 class="mb-0 fw-bold">{{ cat.name }}</h5>
+            <h5 class="fw-bold">{{ cat.name }}</h5>
             <span class="text-muted small">
-              <i class="fa-solid fa-note-sticky me-1" aria-hidden="true"></i>{{ cat.notes_count }} заметок
+              <i class="fa-solid fa-note-sticky me-1" aria-hidden="true"></i>Заметок: {{ cat.notes_count }}
             </span>
           </div>
         </div>
         <a
-          href="{% url 'category_edit' cat.pk %}"
+          href="{% url 'notes:category_edit' cat.pk %}"
           class="btn btn-sm btn-dark"
           data-bs-toggle="tooltip" data-bs-title="Редактировать"
         >
@@ -46,10 +41,9 @@
   {% empty %}
   <div class="col-12 text-center py-5">
     <i class="fa-solid fa-folder-open fa-3x text-muted mb-3" aria-hidden="true"></i>
-    <h4 class="text-muted">Пока нет ни одной категории</h4>
-    <p class="mx-auto text-muted" style="max-width: 30rem;">Категории помогают группировать заметки по темам (например, «Промпты», «Настройки», «LoRA»). Создайте первую папку для порядка.
-    </p>
-    <a href="{% url 'category_new' %}" class="btn btn-dark rounded-pill px-3 shadow-sm">
+    <h4 class="text-muted">Здесь пока пусто</h4>
+    <p class="mx-auto text-muted" style="max-width: 30rem;">Категории помогают навести порядок в заметках. Создайте первую категорию, чтобы распределить по ней свои записи.</p>
+    <a href="{% url 'notes:category_new' %}" class="btn btn-dark rounded-pill px-3 shadow-sm">
       <i class="fa-solid fa-plus me-1" aria-hidden="true"></i>Создать категорию
     </a>
 </div>
@@ -60,7 +54,7 @@
   <ul class="pagination justify-content-center border-top mb-0 mt-3 pt-3">
     {% if page_obj.has_previous %}
       <li class="page-item">
-        <a class="page-link text-dark" href="?page={{ page_obj.previous_page_number }}">Назад</a>
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Назад</a>
       </li>
     {% else %}
       <li class="page-item disabled">
@@ -69,14 +63,14 @@
     {% endif %}
 
     <li class="page-item active" aria-current="page">
-      <span class="page-link bg-dark border-dark">
+      <span class="page-link">
         {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
       </span>
     </li>
 
     {% if page_obj.has_next %}
       <li class="page-item">
-        <a class="page-link text-dark" href="?page={{ page_obj.next_page_number }}">Вперед</a>
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперед</a>
       </li>
     {% else %}
       <li class="page-item disabled">
