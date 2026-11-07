@@ -87,7 +87,6 @@ function renderStatsCharts() {
       ],
     },
     options: {
-      indexAxis: "y",
       responsive: true,
       plugins: { legend: { display: false } },
       scales: {
