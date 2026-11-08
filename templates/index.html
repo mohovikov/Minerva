@@ -59,17 +59,53 @@
         </div>
       </div>
     </form>
+    {% if current_q or current_model or current_category %}
+    <div class="alert alert-info py-2 small mt-3 mb-0 d-flex flex-wrap">
+      <div class="d-flex flex-wrap gap-2 w-100">
+        <span class="fw-bold"><i class="fa-solid fa-filter me-1" aria-hidden="true"></i>Фильтры:</span>
+        
+        {% if current_q %}
+          <span
+            class="badge bg-light-subtle border border-light-subtle text-light-emphasis rounded-pill text-truncate text-start"
+            style="max-width: 250px;"
+            data-bs-toggle="tooltip" data-bs-title="{{ current_q }}"
+          >Поиск: "{{ current_q }}"</span>
+        {% endif %}
+
+        {% if current_model %}
+          <span
+            class="badge bg-light-subtle border border-light-subtle text-light-emphasis rounded-pill text-truncate text-start"
+            style="max-width: 200px;"
+            data-bs-toggle="tooltip" data-bs-title="{{ current_model }}"
+          >Модель: {{ current_model }}</span>
+        {% endif %}
+
+        {% if current_category %}
+          {% for cat in categories %}
+            {% if cat.id|stringformat:"s" == current_category %}
+              <span
+                class="badge bg-light-subtle border border-light-subtle text-light-emphasis rounded-pill text-truncate text-start"
+                style="max-width: 200px;"
+                data-bs-toggle="tooltip" data-bs-title="{{ cat.name }}"
+              >Категория: {{ cat.name }}</span>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
   </div>
   {% if current_q or current_model or current_category %}
   <div class="card-footer small text-center">
-    Найдено: <strong>{{ paginator.count }}</strong> артов
+    Найдено артов: <strong>{{ paginator.count }}</strong>
     <a href="{% url 'index' %}" class="ms-2 text-decoration-none text-danger">
       <i class="fa-solid fa-circle-xmark me-1" aria-hidden="true"></i>Сбросить фильтры
     </a>
   </div>
-{% endif %}
+  {% endif %}
 </div>
-<div class="row g-3 masonry-grid">
+
+<div class="row g-2 masonry-grid">
   {% for artwork in artworks %}
   <div class="masonry-item col-6 col-md-4 col-lg-3 col-xl-2">
     <div class="card rounded-4 border-0 shadow-sm">

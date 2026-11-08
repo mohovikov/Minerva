@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Категории{% endblock %}
+{% block title %}Категории артов{% endblock %}
 {% block content %}
 <div class="d-flex flex-wrap flex-lg-nowrap gap-3 align-items-center pb-3 mb-3 border-bottom">
   <div class="d-flex flex-column">
     <h3>
-      <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Категории заметок
+      <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Категории артов
     </h3>
-    <p class="text-muted mb-0 small">Структура вашей галереи. Группируйте работы по статусу или теме, чтобы быстро находить нужное и наводить порядок</p>
+    <p class="text-muted mb-0 small">Группируйте арты по статусу или теме для быстрого поиска</p>
   </div>
   <a href="{% url 'artworks:category_create' %}" class="btn btn-dark rounded-pill px-3 shadow-sm ms-auto">
     <i class="fa-solid fa-plus me-1" aria-hidden="true"></i>Новая категория

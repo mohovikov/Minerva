@@ -30,6 +30,11 @@ class NoteCreateView(LoginRequiredMixin, CreateView):
     template_name = "notes/create_or_edit.html"
     success_url = reverse_lazy("notes:list")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         messages.success(self.request, "Заметка сохранена в базе знаний")
@@ -41,6 +46,11 @@ class NoteUpdateView(LoginRequiredMixin, UpdateView):
     form_class = NoteForm
     template_name = "notes/create_or_edit.html"
     success_url = reverse_lazy("notes:list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["category_list"] = Category.objects.filter(user=self.request.user)
+        return kwargs
 
     def get_queryset(self):
         return Note.objects.filter(user=self.request.user)

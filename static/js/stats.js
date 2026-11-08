@@ -1,15 +1,12 @@
-// Функция для получения цвета из CSS
 function getCssColor(variableName) {
   return getComputedStyle(document.documentElement)
     .getPropertyValue(variableName)
     .trim();
 }
 
-// Глобальный объект для хранения экземпляров графиков (чтобы их можно было уничтожить)
 window.statsCharts = {};
 
 function renderStatsCharts() {
-  // 1. Получаем актуальные цвета (каждый раз при вызове)
   const colors = {
     line: getCssColor("--chart-line"),
     lineBg: getCssColor("--chart-line-bg"),
@@ -26,13 +23,14 @@ function renderStatsCharts() {
     barRes: getCssColor("--chart-bar-res"),
   };
 
-  // 2. Уничтожаем старые графики, если они существуют
   Object.values(window.statsCharts).forEach((chart) => {
     if (chart) chart.destroy();
   });
-  window.statsCharts = {}; // Очищаем объект
+  window.statsCharts = {};
 
-  // 3. Создаем графики заново
+  // ==========================================
+  // График 1: Генерация за последние 30 дней
+  // ==========================================
   const ctx1 = document.getElementById("dailyChart").getContext("2d");
   window.statsCharts.daily = new Chart(ctx1, {
     type: "line",
@@ -72,6 +70,9 @@ function renderStatsCharts() {
     },
   });
 
+  // ==========================================
+  // График 2: Топ-5 моделей
+  // ==========================================
   const ctx2 = document.getElementById("modelChart").getContext("2d");
   window.statsCharts.model = new Chart(ctx2, {
     type: "bar",
@@ -100,15 +101,18 @@ function renderStatsCharts() {
     },
   });
 
-  const ctx3 = document.getElementById("tagChart").getContext("2d");
-  window.statsCharts.tag = new Chart(ctx3, {
+  // ==========================================
+  // График 3: Топ-15 Positive тегов
+  // ==========================================
+  const ctxPos3 = document.getElementById("posTagChart").getContext("2d");
+  new Chart(ctxPos3, {
     type: "bar",
     data: {
-      labels: tagNames,
+      labels: posTagNames,
       datasets: [
         {
           label: "Использований",
-          data: tagCounts,
+          data: posTagCounts,
           backgroundColor: colors.barMain,
           borderRadius: 4,
         },
@@ -127,14 +131,75 @@ function renderStatsCharts() {
         },
         y: {
           grid: { display: false },
-          ticks: { autoSkip: false, stepSize: 1, color: colors.text },
+          ticks: { autoSkip: false, font: { size: 11 }, color: colors.text },
         },
+      },
+      onClick: (e, activeElements) => {
+        if (activeElements.length > 0) {
+          const index = activeElements[0].index;
+          const tagName = posTagNames[index];
+          window.location.href = `/?q=${encodeURIComponent(tagName)}`;
+        }
+      },
+      onHover: (event, activeElements) => {
+        event.native.target.style.cursor =
+          activeElements.length > 0 ? "pointer" : "default";
       },
     },
   });
 
-  const ctx4 = document.getElementById("resChart").getContext("2d");
-  window.statsCharts.res = new Chart(ctx4, {
+  // ==========================================
+  // График 4: Топ-15 Negative тегов
+  // ==========================================
+  const ctxNeg4 = document.getElementById("negTagChart").getContext("2d");
+  new Chart(ctxNeg4, {
+    type: "bar",
+    data: {
+      labels: negTagNames,
+      datasets: [
+        {
+          label: "Использований",
+          data: negTagCounts,
+          backgroundColor: "#dc3545",
+          borderRadius: 4,
+        },
+      ],
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: { stepSize: 1, color: colors.text },
+          grid: { color: colors.grid },
+        },
+        y: {
+          grid: { display: false },
+          ticks: { autoSkip: false, font: { size: 11 }, color: colors.text },
+        },
+      },
+      onClick: (e, activeElements) => {
+        if (activeElements.length > 0) {
+          const index = activeElements[0].index;
+          const tagName = negTagNames[index];
+          window.location.href = `/?q=${encodeURIComponent(tagName)}`;
+        }
+      },
+      onHover: (event, activeElements) => {
+        event.native.target.style.cursor =
+          activeElements.length > 0 ? "pointer" : "default";
+      },
+    },
+  });
+
+  // ==========================================
+  // График 5: Топ-5 разрешений
+  // ==========================================
+  const ctx5 = document.getElementById("resChart").getContext("2d");
+  window.statsCharts.res = new Chart(ctx5, {
     type: "bar",
     data: {
       labels: resNames,
@@ -142,7 +207,7 @@ function renderStatsCharts() {
         {
           label: "Количество артов",
           data: resCounts,
-          backgroundColor: colors.barRes,
+          backgroundColor: colors.bars,
           borderRadius: 4,
         },
       ],

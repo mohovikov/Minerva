@@ -23,6 +23,12 @@ class NoteForm(BootstrapFormMixin, forms.ModelForm):
             ),
         }
 
+    def __init__(self, *args, **kwargs):
+        category_list = kwargs.pop("category_list", None)
+        super().__init__(*args, **kwargs)
+        if category_list:
+            self.fields["category"].queryset = category_list  # type: ignore
+
 
 class CategoryForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:

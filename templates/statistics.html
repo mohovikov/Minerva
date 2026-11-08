@@ -2,52 +2,38 @@
 {% load static %}
 {% block title %}Статистика{% endblock %}
 {% block content %}
-<h2 class="pb-3 mb-3 border-bottom">
-  <i class="fa-solid fa-chart-simple me-1" aria-hidden="true"></i>Статистика
-</h2>
+<div class="d-flex flex-column pb-3 mb-3 border-bottom">
+  <h3>
+    <i class="fa-solid fa-chart-simple me-1" aria-hidden="true"></i>Статистика
+  </h3>
+  <p class="text-muted small mb-0">Аналитика ваших генераций: активность, модели и самые частые теги</p>
+</div>
 <div class="row g-4">
   <!-- Виджет: Общая статистика -->
-  <div class="col-12 col-lg-4">
+  <div class="col-12">
     <div class="card border-0 shadow rounded-4 p-4 d-flex flex-column justify-content-between">
       <h5 class="card-title">
         <i class="fa-solid fa-layer-group me-1" aria-hidden="true"></i>Моя коллекция
       </h5>
       <h6 class="card-subtitle mb-4 text-body-secondary small">Общая статистика по вашим артам, заметкам и категориям</h6>
-      <!-- Три главных счетчика -->
-      <div class="row text-center">
-        <div class="col-4 border-end">
-          <h2 class="fw-bold mb-0">{{ total_artworks }}</h2>
+      <div class="row g-3 text-center">
+        <div class="col-6 col-lg-3">
+          <h2 class="fw-bold">{{ total_artworks }}</h2>
           <span class="text-muted small text-uppercase">Артов</span>
         </div>
-        <div class="col-4 border-end">
-          <h2 class="fw-bold mb-0">{{ total_notes }}</h2>
+        <div class="col-6 col-lg-3">
+          <h2 class="fw-bold">{{ total_artworks_categories }}</h2>
+          <span class="text-muted small text-uppercase">Категорий артов</span>
+        </div>
+        <div class="col-6 col-lg-3">
+          <h2 class="fw-bold">{{ total_notes }}</h2>
           <span class="text-muted small text-uppercase">Заметок</span>
         </div>
-        <div class="col-4">
-          <h2 class="fw-bold mb-0">{{ total_categories }}</h2>
-          <span class="text-muted small text-uppercase">Категорий</span>
+        <div class="col-6 col-lg-3">
+          <h2 class="fw-bold">{{ total_notes_categories }}</h2>
+          <span class="text-muted small text-uppercase">Категорий заметок</span>
         </div>
       </div>
-    </div>
-  </div>
-  <!-- График 2: Топ моделей (Столбчатый) -->
-  <div class="col-12 col-lg-4">
-    <div class="card border-0 shadow rounded-4 p-4">
-      <h5 class="card-title">
-        <i class="fa-solid fa-cubes me-1" aria-hidden="true"></i>Топ-5 моделей
-      </h5>
-      <h6 class="card-subtitle mb-4 text-body-secondary small">Топ-5 моделей, которые вы используете чаще всего. Наведите на график, чтобы увидеть точное количество</h6>
-      <canvas id="modelChart" style="max-height: 300px;"></canvas>
-    </div>
-  </div>
-  <!-- График 4: Разрешения (Столбчатый) -->
-  <div class="col-12 col-lg-4">
-    <div class="card border-0 shadow rounded-4 p-4">
-      <h5 class="card-title">
-        <i class="fa-solid fa-crop-simple me-1" aria-hidden="true"></i>Топ-5 разрешений
-      </h5>
-      <h6 class="card-subtitle mb-4 text-body-secondary small">В каких форматах вы генерируете чаще всего. Помогает понять, какие пропорции вам ближе</h6>
-      <canvas id="resChart" style="max-height: 350px;"></canvas>
     </div>
   </div>
   <!-- График 1: Динамика по дням (Линейный) -->
@@ -60,48 +46,128 @@
       <canvas id="dailyChart" style="max-height: 300px;"></canvas>
     </div>
   </div>
-  <!-- График 3: Топ-15 тегов (Горизонтальный) -->
-  <div class="col-12">
+  <!-- График 2: Топ моделей (Столбчатый) -->
+  <div class="col-12 col-lg-6">
     <div class="card border-0 shadow rounded-4 p-4">
-      <div class="d-flex align-items-start flex-column flex-lg-row">
-        <div>
-          <h5 class="card-title">
-            <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Топ-15 используемых тегов
-          </h5>
-          <h6 class="card-subtitle mb-4 text-body-secondary small">Какие слова и теги чаще всего встречаются в ваших позитивных промптах</h6>
-        </div>
-        <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3 ms-auto" data-bs-toggle="modal" data-bs-target="#allTagsModal">
-          <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Все теги
-        </button>
-      </div>
-      <canvas id="tagChart" style="max-height: 500px;"></canvas>
+      <h5 class="card-title">
+        <i class="fa-solid fa-cubes me-1" aria-hidden="true"></i>Топ-5 моделей
+      </h5>
+      <h6 class="card-subtitle mb-4 text-body-secondary small">Топ-5 моделей, которые вы используете чаще всего. Наведите на график, чтобы увидеть точное количество</h6>
+      <canvas id="modelChart" style="max-height: 300px;"></canvas>
+    </div>
+  </div>
+  <!-- График 4: Разрешения (Столбчатый) -->
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow rounded-4 p-4">
+      <h5 class="card-title">
+        <i class="fa-solid fa-crop-simple me-1" aria-hidden="true"></i>Топ-5 разрешений
+      </h5>
+      <h6 class="card-subtitle mb-4 text-body-secondary small">В каких форматах вы генерируете чаще всего. Помогает понять, какие пропорции вам ближе</h6>
+      <canvas id="resChart" style="max-height: 350px;"></canvas>
     </div>
   </div>
 </div>
-<div class="modal fade" id="allTagsModal" tabindex="-1" aria-labelledby="allTagsModalLabel" aria-hidden="true">
+<div class="row g-4 mt-4">
+  <!-- График Positive -->
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow rounded-4 p-4">
+      <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+          <h5 class="fw-bold mb-1"><i class="fa-solid fa-plus text-success me-2"></i>Топ-15 Positive</h5>
+          <p class="text-muted small mb-0">Самые частые теги в ваших промптах.</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-dark rounded-pill" data-bs-toggle="modal" data-bs-target="#allPosTagsModal">
+          <i class="fa-solid fa-list me-1" aria-hidden="true"></i>Все
+        </button>
+      </div>
+      <canvas id="posTagChart" style="max-height: 400px;"></canvas>
+    </div>
+  </div>
+
+  <!-- График Negative -->
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow rounded-4 p-4">
+      <div class="d-flex justify-content-between align-items-start mb-4">
+          <div>
+              <h5 class="fw-bold mb-1"><i class="fa-solid fa-minus text-danger me-2"></i>Топ-15 Negative</h5>
+              <p class="text-muted small mb-0">От каких артефактов вы защищаетесь.</p>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-dark rounded-pill" data-bs-toggle="modal" data-bs-target="#allNegTagsModal">
+            <i class="fa-solid fa-list me-1" aria-hidden="true"></i>Все
+          </button>
+      </div>
+      <canvas id="negTagChart" style="max-height: 400px;"></canvas>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="allPosTagsModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content border-0 shadow rounded-4">
-      <div class="modal-header border-bottom-0">
-        <h5 class="modal-title" id="allTagsModalLabel">
-          <i class="fa-solid fa-tags me-1" aria-hidden="true"></i>Все используемые теги
-          <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill ms-1">{{ all_tags|length }}</span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold"><i class="fa-solid fa-plus text-success me-2"></i>Все Positive-теги</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-        <div class="d-flex flex-wrap gap-3">
-          {% for tag, count in all_tags %}
-            <span class="badge bg-light-subtle border border-light-subtle text-light-emphasis rounded-pill" style="display: flex; align-items: center;">
-              {{ tag }}<span class="vr mx-2"></span>
-              <span class="badge bg-info-subtle text-info-emphasis rounded-pill">{{ count }}</span>
-            </span>
-          {% empty %}
-            <p class="text-muted">Тегов пока нет.</p>
+      <div class="modal-body pt-3">
+        <div class="input-group mb-3">
+          <span
+            class="input-group-text"
+            id="helpSearch"
+          >
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          </span>
+          <input
+            type="text"
+            id="posTagSearch"
+            class="form-control"
+            placeholder="Найти позитивный тег..."
+            aria-describedby="helpSearch"
+          >
+        </div>
+        <div class="d-flex flex-wrap gap-2" id="posTagsContainer">
+          {% for tag, count in all_pos_tags %}
+            <a
+              href="{% url 'index' %}?q={{ tag }}"
+              class="tag-item btn btn-sm btn-outline-dark px-2 py-1 rounded-pill"
+            >{{ tag }} <span class="badge bg-secondary ms-1">{{ count }}</span></a>
           {% endfor %}
         </div>
       </div>
-      <div class="modal-footer border-top-0">
-        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Закрыть</button>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="allNegTagsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow rounded-4">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold">
+          <i class="fa-solid fa-minus text-danger me-1" aria-hidden="true"></i>Все Negative-теги
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body pt-3">
+        <div class="input-group mb-3">
+          <span
+            class="input-group-text"
+            id="helpSearch"
+          >
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          </span>
+          <input
+            type="text"
+            id="negTagSearch"
+            class="form-control"
+            placeholder="Найти негативный тег..."
+            aria-describedby="helpSearch"
+          >
+        </div>
+        <div class="d-flex flex-wrap gap-2" id="negTagsContainer">
+          {% for tag, count in all_neg_tags %}
+            <a
+              href="{% url 'index' %}?q={{ tag }}"
+              class="tag-item btn btn-sm btn-outline-dark px-2 py-1 rounded-pill"
+            >{{ tag }} <span class="badge bg-secondary ms-1">{{ count }}</span></a>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </div>
@@ -115,10 +181,41 @@
   const counts = {{ counts_json|safe }}
   const modelNames = {{ model_names_json|safe }}
   const modelCounts = {{ model_counts_json|safe }}
-  const tagNames = {{ tag_names_json|safe }}
-  const tagCounts = {{ tag_counts_json|safe }}
+  const posTagNames = {{ pos_tag_names_json|safe }};
+  const posTagCounts = {{ pos_tag_counts_json|safe }};
+  const negTagNames = {{ neg_tag_names_json|safe }};
+  const negTagCounts = {{ neg_tag_counts_json|safe }};
   const resNames = {{ res_names_json|safe }}
   const resCounts = {{ res_counts_json|safe }}
+</script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+  // Функция для настройки поиска
+  function setupSearch(inputId, containerId) {
+    const searchInput = document.getElementById(inputId);
+    const container = document.getElementById(containerId);
+    
+    if (searchInput && container) {
+      const tags = container.querySelectorAll('.tag-item');
+      searchInput.addEventListener('input', function() {
+        const filter = this.value.toLowerCase().trim();
+        tags.forEach(tag => {
+          // Берем текст внутри тега
+          const text = tag.textContent.toLowerCase();
+        
+          if (text.includes(filter)) {
+            tag.classList.remove('d-none');
+          } else {
+            tag.classList.add('d-none');
+          }
+        });
+      });
+    }
+  }
+
+  setupSearch('posTagSearch', 'posTagsContainer');
+  setupSearch('negTagSearch', 'negTagsContainer');
+});
 </script>
 <script src="{% static 'js/stats.js' %}"></script>
 {% endblock %}

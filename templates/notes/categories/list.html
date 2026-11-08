@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Категории{% endblock %}
+{% block title %}Категории заметок{% endblock %}
 {% block content %}
 <div class="d-flex flex-wrap flex-lg-nowrap gap-3 align-items-center pb-3 mb-3 border-bottom">
   <div class="d-flex flex-column">
     <h3>
       <i class="fa-solid fa-folder-open me-1" aria-hidden="true"></i>Категории заметок
     </h3>
-    <p class="text-muted mb-0 small">Структура ваших заметок. Группируйте заметки по темам, чтобы быстро находить нужное.</p>
+    <p class="text-muted mb-0 small">Создавайте категории для своих записей</p>
   </div>
   <a href="{% url 'notes:category_new' %}" class="btn btn-dark rounded-pill px-3 shadow-sm ms-auto">
       <i class="fa-solid fa-plus me-1" aria-hidden="true"></i>Новая категория

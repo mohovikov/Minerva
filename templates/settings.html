@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Настройки{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap flex-md-nowrap gap-3 align-items-center pb-3 mb-3 border-bottom">
+  <div>
+    <h3>
+      <i class="fa-solid fa-gear me-1" aria-hidden="true"></i>Настройки
+    </h3>
+    <p class="text-muted small mb-0">Управление отображением галереи и статистики</p>
+  </div>
+  <a href="{% url 'index' %}?page=1" class="btn btn-dark rounded-pill px-3 shadow-sm ms-auto">
+    <i class="fa-solid fa-arrow-left me-1" aria-hidden="true"></i>На главную
+  </a>
+</div>
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <form method="POST" class="card border-0 shadow-sm rounded-4">
+      {% csrf_token %}
+      <div class="card-body">
+        {% for field in form %}
+          <div class="mb-4">
+            <label class="form-label fw-medium">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-dark rounded-pill px-3 shadow-sm">Сохранить</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

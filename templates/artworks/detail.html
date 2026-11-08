@@ -23,7 +23,7 @@
     <h5 class="fw-bold mb-3 pt-3 mt-3 border-top">Похожие работы</h5>
     <div class="row g-3">
       {% for art in similar_artworks %}
-      <div class="col-6 col-lg-3">
+      <div class="col-3">
         <div class="card rounded-4 border-0 shadow-sm">
           <a href="{{ art.get_absolute_url }}">
             <img 

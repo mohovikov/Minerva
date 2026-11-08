@@ -48,6 +48,11 @@
           </a>
         </li>
         <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" href="{% url 'settings' %}">
+            <i class="fa-solid fa-gear" aria-hidden="true"></i>Настройки
+          </a>
+        </li>
+        <li class="nav-item">
           <form
             method="POST"
             action="{% url 'logout' %}"

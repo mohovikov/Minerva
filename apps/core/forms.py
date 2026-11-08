@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import UserSettings
 
 
 class BootstrapFormMixin(forms.ModelForm):
@@ -64,3 +65,25 @@ class CustomUserLoginForm(AuthenticationForm):
 
             if self.errors and field_name in self.errors:
                 field.widget.attrs["class"] += " is-invalid"
+
+
+class UserSettingsForm(BootstrapFormMixin, forms.ModelForm):
+    class Meta:
+        model = UserSettings
+        fields = ["items_per_page", "ignored_positive_tags", "ignored_negative_tags"]
+        widgets = {
+            "items_per_page": forms.NumberInput(
+                attrs={"class": "form-control", "min": "1", "max": "100"}
+            ),
+            "ignored_positive_tags": forms.Textarea(
+                attrs={"class": "form-control-sm font-monospace", "rows": 9}
+            ),
+            "ignored_negative_tags": forms.Textarea(
+                attrs={"class": "form-control-sm font-monospace", "rows": 6}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["items_per_page"].widget.attrs["min"] = 1
+        self.fields["items_per_page"].widget.attrs["max"] = 100

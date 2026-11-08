@@ -39,14 +39,7 @@ class ArtworkUploadView(LoginRequiredMixin, CreateView):
             try:
                 image_data = ImageService.process_and_save(file)
 
-                artwork = Artwork(
-                    user=self.request.user,
-                    hash=image_data["hash"],
-                    width=image_data["width"],
-                    height=image_data["height"],
-                    original_file=image_data["original_file"],
-                    thumbnail_file=image_data["thumbnail_file"],
-                )
+                artwork = Artwork(user=self.request.user, **image_data)
                 artwork.save()
                 count += 1
             except Exception as e:
@@ -72,7 +65,7 @@ class ArtworkDetailView(LoginRequiredMixin, DetailView):
             Artwork.objects.select_related("category", "user"),
             hash=self.kwargs.get("hash"),
         )
-        if artwork.user != self.request.user.pk and not self.request.user.is_staff:
+        if artwork.user.pk != self.request.user.pk and not self.request.user.is_staff:
             raise PermissionDenied("У вас нет доступа к этому арту")
 
         return artwork
@@ -81,7 +74,6 @@ class ArtworkDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         current_art = self.object
 
-        # 🎯 Ищем похожие арты (исключая текущий)
         similar_artworks = (
             Artwork.objects.filter(user=self.request.user)
             .exclude(id=current_art.pk)
@@ -89,7 +81,7 @@ class ArtworkDetailView(LoginRequiredMixin, DetailView):
                 Q(model_name=current_art.model_name) | Q(category=current_art.category)
             )
             .select_related("category")
-            .order_by("-uploaded_at")[:4]
+            .order_by("-uploaded_at")[:8]
         )
 
         context["similar_artworks"] = similar_artworks
@@ -111,7 +103,7 @@ class ArtworkEditView(LoginRequiredMixin, UpdateView):
             Artwork.objects.select_related("category", "user"),
             hash=self.kwargs.get("hash"),
         )
-        if artwork.user != self.request.user.pk and not self.request.user.is_staff:
+        if artwork.user.pk != self.request.user.pk and not self.request.user.is_staff:
             raise PermissionDenied("У вас нет прав на редактирование")
         return artwork
 
@@ -132,7 +124,7 @@ class ArtworkDeleteView(LoginRequiredMixin, DeleteView):
         hash_str = self.kwargs.get("hash")
         artwork = get_object_or_404(Artwork, hash=hash_str)
 
-        if artwork.user != self.request.user and not self.request.user.is_staff:
+        if artwork.user.pk != self.request.user and not self.request.user.is_staff:
             raise PermissionDenied("У вас нет прав на удаление этого арта")
 
         return artwork
@@ -152,7 +144,7 @@ class ArtworkDownloadView(LoginRequiredMixin, BaseDetailView):
         hash_str = self.kwargs.get("hash")
         artwork = get_object_or_404(Artwork, hash=hash_str)
 
-        if artwork.user != self.request.user and not self.request.user.is_staff:
+        if artwork.user.pk != self.request.user and not self.request.user.is_staff:
             raise PermissionDenied("У вас нет доступа к этому арту")
 
         return artwork
