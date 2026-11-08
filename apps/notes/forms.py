@@ -24,10 +24,10 @@ class NoteForm(BootstrapFormMixin, forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        category_list = kwargs.pop("category_list", None)
+        user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        if category_list:
-            self.fields["category"].queryset = category_list  # type: ignore
+        if user:
+            self.fields["category"].queryset = Category.objects.filter(user=user)  # type: ignore
 
 
 class CategoryForm(BootstrapFormMixin, forms.ModelForm):

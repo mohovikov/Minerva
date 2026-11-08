@@ -54,8 +54,8 @@ function renderStatsCharts() {
       scales: {
         x: {
           ticks: {
-            maxRotation: 45,
-            minRotation: 45,
+            maxRotation: 30,
+            minRotation: 30,
             autoSkip: true,
             color: colors.text,
           },
@@ -131,7 +131,7 @@ function renderStatsCharts() {
         },
         y: {
           grid: { display: false },
-          ticks: { autoSkip: false, font: { size: 11 }, color: colors.text },
+          ticks: { autoSkip: false, color: colors.text },
         },
       },
       onClick: (e, activeElements) => {
@@ -178,7 +178,7 @@ function renderStatsCharts() {
         },
         y: {
           grid: { display: false },
-          ticks: { autoSkip: false, font: { size: 11 }, color: colors.text },
+          ticks: { autoSkip: false, color: colors.text },
         },
       },
       onClick: (e, activeElements) => {

@@ -94,6 +94,12 @@ class ArtworkEditForm(BootstrapFormMixin, BaseArtworkForm):
             "cfg_scale": forms.NumberInput(attrs={"step": "0.1", "min": "0.1"}),
         }
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields["category"].queryset = Category.objects.filter(user=user)  # type: ignore
+
 
 class CategoryForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
